@@ -1,6 +1,6 @@
-# mnist_train에 드롭아웃을 적용한 모델
-
 import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
 
 # read MNIST data (one-hot encording 방식으로)
 from tensorflow.examples.tutorials.mnist import input_data
@@ -64,3 +64,25 @@ accuracy = tf.reduce_mean(tf.cast(is_corerct, tf.float32))
 print("정확도:", sess.run(accuracy, feed_dict={X: mnist.test.images,
                                             Y: mnist.test.labels,
                                             keep_prob: 1}))
+
+# 학습 결과 labels에 저장
+labels = sess.run(model, feed_dict={X: mnist.test.images,
+                                    Y: mnist.test.labels,
+                                    keep_prob: 1})
+# 손글씨를 출력할 그래프
+fig = plt.figure()
+
+# 예측값 출력
+for i in range(10):
+    # 2행 5열 그래프 생성. i+1번째에 테스트 이미지 출력
+    subplot = fig.add_subplot(2, 5, i+1)
+    # 이미지의 원본 출력을 위해 이미지 크기는 지정하지 않음
+    subplot.set_xticks([])
+    subplot.set_yticks([])
+    # 출력한 이미지 위에 예측값 출력
+    # 예측값: 해당 배열에서 가장 높은 값을 가진 인덱스
+    subplot.set_title('%d'%np.argmax(labels[i]))
+    # 이미지를 28x28 형식의 그레이스케일로 출력
+    subplot.imshow(mnist.test.images[i].reshape((28, 28)), cmap=plt.cm.gray_r)
+
+plt.show()
